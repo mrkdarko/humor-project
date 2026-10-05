@@ -82,26 +82,50 @@ export function ProfileForm({ userId, firstName, lastName, initialAvatarPath, in
   }
 
   return (
-    <form className="space-y-6" onSubmit={saveProfile}>
-      {needsNames ? <div className="border-l-2 border-emerald-700 pl-4 text-sm leading-6 text-stone-600">Add your first and last name to finish setting up your profile.</div> : null}
-      <div className="flex items-center gap-5">
-        {avatarPreview ? (
-          <Image className="size-20 rounded-full border border-stone-200 object-cover" src={avatarPreview} alt="Profile" width={80} height={80} unoptimized />
-        ) : (
-          <div className="flex size-20 items-center justify-center rounded-full border border-stone-300 bg-stone-100 text-2xl font-semibold text-stone-500">{firstname?.[0]?.toUpperCase() || "?"}</div>
-        )}
-        <label className="cursor-pointer text-sm font-medium text-emerald-800 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-950">
-          {busy ? "Working..." : "Upload a photo"}
-          <input accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" disabled={busy} onChange={(event) => void uploadPhoto(event.target.files?.[0])} type="file" />
+    <form className="space-y-8" onSubmit={saveProfile}>
+      {needsNames ? <div className="bg-[var(--coin-gold)] border-[4px] border-black p-4 text-black font-bold shadow-[4px_4px_0_#000] uppercase">⭐ ENTER YOUR NAME TO START PLAYING!</div> : null}
+
+      {/* Avatar */}
+      <div className="flex items-center gap-6 bg-gray-100 p-4 border-[4px] border-black rounded-xl">
+        <div className="relative">
+          {avatarPreview ? (
+            <Image className="size-24 rounded-xl object-cover border-[4px] border-black shadow-[4px_4px_0_#000] bg-white" src={avatarPreview} alt="Profile" width={96} height={96} unoptimized />
+          ) : (
+            <div className="flex size-24 items-center justify-center rounded-xl bg-[var(--bg-sky)] border-[4px] border-black shadow-[4px_4px_0_#000] text-4xl font-black text-white uppercase">
+              {firstname?.[0] || "?"}
+            </div>
+          )}
+          <div className="absolute -bottom-2 -right-2 bg-[var(--mario-red)] border-2 border-black rounded-full w-8 h-8 flex items-center justify-center text-white text-xs font-bold shadow-[2px_2px_0_#000]">1P</div>
+        </div>
+        
+        <div className="space-y-2">
+          <label className="btn-ghost-chunky inline-flex uppercase text-sm">
+            {busy ? "UPLOADING..." : "CHANGE SPRITE"}
+            <input accept="image/jpeg,image/png,image/webp,image/gif" className="sr-only" disabled={busy} onChange={(event) => void uploadPhoto(event.target.files?.[0])} type="file" />
+          </label>
+          <p className="font-pixel text-[8px] text-gray-500">MAX 5MB. JPG/PNG/GIF</p>
+        </div>
+      </div>
+
+      {/* Name fields */}
+      <div className="grid gap-6 sm:grid-cols-2">
+        <label className="space-y-2 text-sm font-bold text-black uppercase">
+          PLAYER FIRST NAME
+          <input autoComplete="given-name" className="community-input" onChange={(event) => setFirstname(event.target.value)} required value={firstname} />
         </label>
-        <span className="text-xs text-stone-500">Images up to 5 MB</span>
+        <label className="space-y-2 text-sm font-bold text-black uppercase">
+          PLAYER LAST NAME
+          <input autoComplete="family-name" className="community-input" onChange={(event) => setLastname(event.target.value)} required value={lastname} />
+        </label>
       </div>
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium text-stone-700">First name<input autoComplete="given-name" className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100" onChange={(event) => setFirstname(event.target.value)} required value={firstname} /></label>
-        <label className="space-y-2 text-sm font-medium text-stone-700">Last name<input autoComplete="family-name" className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100" onChange={(event) => setLastname(event.target.value)} required value={lastname} /></label>
+
+      {error ? <p role="alert" className="text-sm font-bold text-white bg-[var(--mario-red)] p-3 border-[4px] border-black shadow-[4px_4px_0_#000] uppercase">ERR: {error}</p> : null}
+      
+      <div className="pt-4">
+        <button className="btn-luigi btn-mario" disabled={busy} type="submit">
+          {busy ? "SAVING..." : "SAVE CHARACTER"}
+        </button>
       </div>
-      {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
-      <button className="min-h-11 rounded-md bg-emerald-800 px-5 font-medium text-white transition hover:bg-emerald-900 disabled:cursor-wait disabled:opacity-60" disabled={busy} type="submit">{busy ? "Saving..." : "Save profile"}</button>
     </form>
   );
 }

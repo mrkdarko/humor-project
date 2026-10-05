@@ -28,16 +28,33 @@ export default async function ProfilePage() {
   const needsNames = !profile?.firstname?.trim() || !profile?.lastname?.trim();
 
   return (
-    <main className="min-h-screen bg-[#f7f8f5] px-5 py-8 text-stone-950 sm:px-8">
-      <div className="mx-auto max-w-3xl">
-        <header className="flex items-center justify-between border-b border-stone-200 pb-5"><Link className="font-semibold tracking-wide" href="/dashboard">HUMOR PROJECT</Link><SignOutButton /></header>
+    <main className="relative min-h-screen px-5 py-8 sm:px-8 overflow-hidden z-0 bg-[var(--bg-ground)]">
+      <div className="mx-auto max-w-3xl relative z-10">
+        {/* Header */}
+        <header className="flex items-center justify-between border-b-[4px] border-black pb-5 bg-white/90 p-4 rounded-xl shadow-[4px_4px_0_#000] mb-8">
+          <Link className="font-pixel text-lg font-bold tracking-tight text-black flex items-center gap-2" href="/dashboard">
+            🍄 HUMOR PROJECT
+          </Link>
+          <SignOutButton />
+        </header>
+
         <section className="py-10">
-          <p className="text-sm font-medium text-emerald-800">YOUR ACCOUNT</p>
-          <h1 className="mt-2 text-3xl font-semibold">Profile</h1>
-          <p className="mb-8 mt-2 text-stone-600">Manage the name and photo shown on your account.</p>
-          <ProfileForm userId={user.id} firstName={firstName} lastName={lastName} initialAvatarPath={avatarPath} initialAvatarPreview={signedAvatar?.signedUrl || providerAvatar} needsNames={needsNames} />
+          <div className="inline-block bg-[var(--coin-gold)] px-4 py-2 border-[4px] border-black shadow-[4px_4px_0_#000] rotate-[-2deg] mb-6">
+            <span className="font-pixel text-xs text-black">PLAYER SETTINGS</span>
+          </div>
+          
+          <h1 className="font-sans text-5xl font-extrabold text-black uppercase drop-shadow-[4px_4px_0_#FFF] mb-2">CHARACTER SELECT</h1>
+          <p className="mb-8 font-bold text-black bg-white inline-block px-3 py-1 border-2 border-black">Update your player card.</p>
+
+          <div className="chunky-card bg-white p-8">
+            <ProfileForm userId={user.id} firstName={firstName} lastName={lastName} initialAvatarPath={avatarPath} initialAvatarPreview={signedAvatar?.signedUrl || providerAvatar} needsNames={needsNames} />
+          </div>
         </section>
       </div>
+      
+      {/* Decorative blocks */}
+      <div className="absolute top-[20%] -left-10 w-32 h-32 bg-[#CC4B14] border-[4px] border-black shadow-[6px_6px_0_#000] rotate-12 z-[-1]" style={{backgroundImage: 'linear-gradient(45deg, transparent 48%, black 48%, black 52%, transparent 52%), linear-gradient(-45deg, transparent 48%, black 48%, black 52%, transparent 52%)', backgroundSize: '20px 20px'}}></div>
+      <div className="absolute bottom-[10%] -right-10 w-40 h-40 bg-[#00A800] border-[4px] border-black shadow-[6px_6px_0_#000] -rotate-6 z-[-1]"></div>
     </main>
   );
 }
