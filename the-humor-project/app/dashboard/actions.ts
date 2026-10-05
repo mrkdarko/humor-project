@@ -35,7 +35,7 @@ export async function submitGeneration(_previous: ActionState, form: FormData): 
     const sysPrompt = `You are a funny, chronically online college student living in NYC. Write a caption based on the user's prompt. Keep it under 200 characters. Do not use quotes.`;
     
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
         systemInstruction: sysPrompt,
@@ -52,7 +52,7 @@ export async function submitGeneration(_previous: ActionState, form: FormData): 
       p_prompt: prompt, 
       p_topic: topic, 
       p_content: generatedText.substring(0, 500), 
-      p_provider: "Gemini 2.5 Flash" 
+      p_provider: "Gemini 3.8 Flash" 
     });
 
     if (error) {
