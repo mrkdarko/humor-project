@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
@@ -61,9 +60,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </div>
         <div>
           <h2 id="daily-prompt" className="flex items-center gap-2 font-pixel text-sm text-black mb-3">
-            TODAY'S QUEST
+            TODAY&apos;S QUEST
           </h2>
-          <p className="max-w-2xl text-xl font-bold leading-relaxed">{prompt}</p>
+          <p className="caption-copy max-w-2xl text-lg">{prompt}</p>
         </div>
       </section>
 
@@ -93,7 +92,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           {/* Empty */}
           {!unavailable && !rows.length && <div className="chunky-card p-12 text-center bg-white">
             <p className="text-5xl mb-4" aria-hidden="true">{view === "mine" ? "✏️" : "👻"}</p>
-            <h2 className="font-sans text-2xl font-bold uppercase">{view === "mine" ? "INVENTORY EMPTY" : "NO PLAYERS FOUND"}</h2>
+            <h2 className="font-sans text-2xl font-bold uppercase">{view === "mine" ? "INVENTORY EMPTY" : "NO CAPTIONS YET"}</h2>
             <p className="mt-2 text-lg font-bold text-gray-500">{view === "top" ? "No high scores this week." : "Be the first to drop a caption here."}</p>
           </div>}
 
@@ -104,7 +103,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <span className="px-2 py-1 font-bold border-2 border-black bg-[var(--coin-gold)] text-black uppercase">{row.topic}</span>
                 <span className="font-bold text-gray-600 uppercase">{row.user_id === user.id ? "PLAYER 1" : "CPU"} · {new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" })}</span>
               </div>
-              <p className="my-5 whitespace-pre-wrap break-words text-2xl font-bold leading-relaxed">{row.content}</p>
+              <p className="caption-copy my-5 whitespace-pre-wrap break-words text-xl sm:text-2xl">{row.content}</p>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
                 {row.user_id === user.id
                   ? <p className="text-sm font-bold text-gray-600 bg-gray-100 p-2 border-2 border-gray-300 rounded">YOUR CAPTION · {Number(row.upvotes)} HP / {Number(row.downvotes)} DMG</p>
@@ -114,7 +113,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               </div>
               <details className="mt-4 pt-3 border-t-[4px] border-black border-dashed">
                 <summary className="cursor-pointer font-bold text-gray-500 hover:text-black uppercase">VIEW SOURCE CODE (PROMPT)</summary>
-                <p className="mt-3 whitespace-pre-wrap break-words font-bold text-black bg-gray-100 p-3 border-2 border-black rounded">{row.prompt}</p>
+                <p className="caption-copy mt-3 whitespace-pre-wrap break-words text-black bg-gray-100 p-3 border-2 border-black rounded">{row.prompt}</p>
               </details>
             </article>)}
           </div>
@@ -130,7 +129,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <aside className="min-w-0">
           <div className="chunky-card bg-[var(--bg-sky)] p-6 mb-8 border-[4px] border-black shadow-[6px_6px_0_#000]">
              <h2 className="mb-5 font-pixel text-sm text-black flex items-center gap-2 bg-white inline-block p-2 border-2 border-black rounded">
-              <span className="text-lg">🔨</span> CRAFT ITEM
+              <span className="text-lg">🔨</span> CRAFT CAPTION
             </h2>
             <Composer prompt={prompt} />
           </div>
@@ -140,7 +139,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             <ul className="space-y-4">
               {drafts.map(draft => <li key={draft.id} className="p-3 border-2 border-black rounded shadow-[2px_2px_0_#000] bg-[#F0F0F0] hover:bg-white transition-colors cursor-pointer">
                 <p className="text-[10px] font-pixel text-[var(--mario-red)] mb-2">{draft.topic.toUpperCase()} · PENDING</p>
-                <p className="whitespace-pre-wrap break-words text-sm font-bold text-gray-800 line-clamp-3">{draft.prompt}</p>
+                <p className="caption-copy whitespace-pre-wrap break-words text-sm text-gray-800 line-clamp-3">{draft.prompt}</p>
               </li>)}
             </ul>
           </section>}

@@ -10,15 +10,11 @@ export function validateSubmission(form: FormData) {
   const prompt = text("prompt");
   const topic = text("topic");
   const mode = text("mode");
-  const content = text("content");
-  const provider = text("provider");
   if (!topics.includes(topic as Topic)) return { error: "Choose a topic." } as const;
   if (prompt.length < 10 || prompt.length > 2000) return { error: "Your prompt needs 10 to 2,000 characters." } as const;
   if (mode !== "draft" && mode !== "publish") return { error: "Choose a submission type." } as const;
-  if (mode === "publish" && (!content || content.length > 500)) return { error: "Add an AI caption of up to 500 characters." } as const;
-  if (mode === "publish" && (!provider || provider.length > 80)) return { error: "Add the AI tool or model you used (up to 80 characters)." } as const;
-  if (mode === "publish" && text("consent") !== "yes") return { error: "Confirm that you want to share this AI caption and its prompt." } as const;
-  return { data: { prompt, topic: topic as Topic, mode, content, provider } } as const;
+  if (mode === "publish" && text("consent") !== "yes") return { error: "Confirm that you agree to share the caption." } as const;
+  return { data: { prompt, topic: topic as Topic, mode } } as const;
 }
 
 const dailyPrompts = [

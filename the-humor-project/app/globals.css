@@ -39,7 +39,7 @@
 
 body {
   background-color: var(--bg-sky);
-  background-image: radial-gradient(circle at 50px 50px, rgba(255, 255, 255, 0.2) 20px, transparent 21px);
+  background-image: radial-gradient(circle at 50px 50px, rgba(255, 255, 255, 0.06) 20px, transparent 21px);
   background-size: 100px 100px;
   color: var(--text-main);
   font-family: "Fredoka", system-ui, sans-serif;
@@ -56,6 +56,15 @@ body {
 .font-pixel {
   font-family: "Press Start 2P", monospace;
   line-height: 1.5;
+}
+
+.caption-copy,
+.community-input.caption-copy {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* ─── Chunky Card ─── */
