@@ -105,10 +105,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               </div>
               <p className="caption-copy my-5 whitespace-pre-wrap break-words text-xl sm:text-2xl">{row.content}</p>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
-                {row.user_id === user.id
-                  ? <p className="text-sm font-bold text-gray-600 bg-gray-100 p-2 border-2 border-gray-300 rounded">YOUR CAPTION · {Number(row.upvotes)} HP / {Number(row.downvotes)} DMG</p>
-                  : <VoteControls id={row.id} upvotes={Number(row.upvotes)} downvotes={Number(row.downvotes)} ownVote={row.own_vote || 0} />
-                }
+                <VoteControls id={row.id} upvotes={Number(row.upvotes)} downvotes={Number(row.downvotes)} ownVote={row.own_vote || 0} isOwnCaption={row.user_id === user.id} />
                 <span className="max-w-full break-words text-[10px] font-pixel text-gray-400">ENGINE: {row.provider.toUpperCase()}</span>
               </div>
               <details className="mt-4 pt-3 border-t-[4px] border-black border-dashed">
