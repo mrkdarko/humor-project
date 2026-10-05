@@ -16,6 +16,7 @@ export function VoteControls({ id, upvotes, downvotes, ownVote, isOwnCaption = f
       ].map(({ value, Icon, label, count }) =>
         <span key={value} title={isOwnCaption ? "You cannot rate your own caption" : undefined}>
         <button
+          type="submit"
           name="value"
           value={ownVote === value ? 0 : value}
           disabled={pending || isOwnCaption}
@@ -31,7 +32,8 @@ export function VoteControls({ id, upvotes, downvotes, ownVote, isOwnCaption = f
       )}
       {isOwnCaption && <span className="text-sm text-gray-600">Your caption</span>}
     </form>
+    {pending && <p role="status" className="mt-2 text-sm font-bold">Saving vote...</p>}
     {state.error && <p role="alert" className="mt-2 text-[10px] font-pixel text-red-600 uppercase">ERR: {state.error}</p>}
-    <span role="status" className="sr-only">{pending ? "PROCESSING..." : state.success}</span>
+    <span role="status" className="sr-only">{pending ? "" : state.success}</span>
   </div>;
 }

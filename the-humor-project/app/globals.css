@@ -77,16 +77,6 @@ body {
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.chunky-card-interactive:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 8px 8px 0px #000000;
-}
-
-.chunky-card-interactive:active {
-  transform: translate(4px, 4px);
-  box-shadow: 2px 2px 0px #000000;
-}
-
 /* ─── Chunky Input ─── */
 
 .community-input {
@@ -302,18 +292,15 @@ body {
 }
 
 .vote-btn-chunky:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0px #000;
   background: #F0F0F0;
 }
 
 .vote-btn-chunky:active:not(:disabled) {
-  transform: translate(2px, 2px);
   box-shadow: 1px 1px 0px #000;
 }
 
 .vote-btn-chunky[aria-pressed="true"] {
   background: var(--coin-gold);
-  transform: translate(2px, 2px);
   box-shadow: 1px 1px 0px #000;
 }

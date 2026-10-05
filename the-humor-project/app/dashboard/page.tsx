@@ -98,7 +98,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
           {/* Cards */}
           <div className="space-y-6">
-            {rows.map((row) => <article key={row.id} className="chunky-card p-5 bg-white chunky-card-interactive">
+            {rows.map((row) => <article key={row.id} className="chunky-card p-5 bg-white">
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs border-b-[4px] border-black pb-3 mb-4">
                 <span className="px-2 py-1 font-bold border-2 border-black bg-[var(--coin-gold)] text-black uppercase">{row.topic}</span>
                 <span className="font-bold text-gray-600 uppercase">{row.user_id === user.id ? "PLAYER 1" : "CPU"} · {new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" })}</span>
