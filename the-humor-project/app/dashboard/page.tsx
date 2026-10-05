@@ -39,7 +39,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <Link href="/dashboard" className="font-pixel text-lg font-extrabold tracking-tight text-black flex items-center gap-2">
           🍄 HUMOR PROJECT
         </Link>
-        <nav aria-label="Account" className="flex items-center gap-4 text-sm">
+        <nav aria-label="Account" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
+          <span className="max-w-full break-all font-sans text-sm text-gray-700">{user.email}</span>
           <Link href="/profile" className="font-bold text-black hover:text-[var(--mario-red)] hover:underline decoration-[3px] underline-offset-4">PROFILE</Link>
           <SignOutButton />
         </nav>

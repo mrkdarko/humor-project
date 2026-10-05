@@ -30,7 +30,7 @@ export function VoteControls({ id, upvotes, downvotes, ownVote, isOwnCaption = f
         </button>
         </span>
       )}
-      {isOwnCaption && <span className="text-sm text-gray-600">Your caption</span>}
+      {isOwnCaption && <span className="text-sm text-gray-600">Your caption · Ratings from other players only</span>}
     </form>
     {pending && <p role="status" className="mt-2 text-sm font-bold">Saving vote...</p>}
     {state.error && <p role="alert" className="mt-2 text-[10px] font-pixel text-red-600 uppercase">ERR: {state.error}</p>}

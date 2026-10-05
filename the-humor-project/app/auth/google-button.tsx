@@ -12,7 +12,10 @@ export function GoogleButton() {
     setError("");
     const { error: signInError } = await createClient().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: { prompt: "select_account" },
+      },
     });
     if (signInError) {
       setError(signInError.message);
