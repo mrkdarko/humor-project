@@ -1,6 +1,6 @@
 export const topics = ["Campus", "Dorm life", "NYC"] as const;
 export type Topic = (typeof topics)[number];
-export type ActionState = { error?: string; success?: string };
+export type ActionState = { error?: string; success?: string; resetKey?: string };
 
 export function validateSubmission(form: FormData) {
   const text = (key: string) => {

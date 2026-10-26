@@ -8,25 +8,26 @@ function form(values = {}) {
   return data;
 }
 
-test('drafts accept a prompt without an AI output', () => {
+test('drafts accept a prompt without AI output or sharing consent', () => {
   const result = validateSubmission(form());
   assert.equal(result.data.mode, 'draft');
-  assert.equal(result.data.content, '');
+  assert.equal(result.data.prompt, 'Write a short caption about Butler.');
+  assert.equal(result.error, undefined);
 });
 
-test('publishing records the actual prompt, AI tool, and caption', () => {
-  const result = validateSubmission(form({ mode: 'publish', content: ' A caption. ', provider: ' Gemini ', consent: 'yes' }));
-  assert.equal(result.data.content, 'A caption.');
-  assert.equal(result.data.provider, 'Gemini');
+test('AI generation accepts a prompt and consent without client-supplied output', () => {
+  const result = validateSubmission(form({ mode: 'publish', prompt: ' Write a short caption about Butler. ', consent: 'yes' }));
+  assert.equal(result.data.mode, 'publish');
+  assert.equal(result.data.prompt, 'Write a short caption about Butler.');
+  assert.equal(result.error, undefined);
 });
 
 test('invalid topics, modes, and prompt lengths are rejected', () => {
   for (const values of [{topic:'Other'}, {mode:'admin'}, {prompt:'short'}, {prompt:'x'.repeat(2001)}, {prompt:' '.repeat(20)}]) assert.ok(validateSubmission(form(values)).error);
 });
 
-test('published captions require an output, model, and sharing consent', () => {
-  const valid = { mode:'publish', content:'A caption', provider:'Gemini', consent:'yes' };
-  for (const values of [{content:''}, {content:'x'.repeat(501)}, {provider:''}, {provider:'x'.repeat(81)}, {consent:''}]) assert.ok(validateSubmission(form({...valid,...values})).error);
+test('AI publication requires explicit sharing consent', () => {
+  for (const consent of ['', 'no', 'on']) assert.ok(validateSubmission(form({mode:'publish',consent})).error);
 });
 
 test('daily prompt is stable within a UTC day and rotates next day', () => {

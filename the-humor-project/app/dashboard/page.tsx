@@ -1,14 +1,19 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { dailyPrompt, topics } from "@/utils/community";
 import { SignOutButton } from "../sign-out-button";
 import { Composer } from "./composer";
 import { VoteControls } from "./vote-controls";
+import { mediaFilters, type MediaFilter } from "@/utils/meme-media";
+import { MemePhoto } from "./meme-photo";
 
-type FeedRow = { id: string; content: string; prompt: string; topic: string; provider: string; user_id: string; created_at: string; upvotes: number; downvotes: number; own_vote: number };
+type FeedRow = { id: string; content: string; prompt: string; topic: string; provider: string; user_id: string; created_at: string; upvotes: number; downvotes: number; own_vote: number; image_path: string | null; image_alt: string | null; image_width: number | null; image_height: number | null };
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ view?: string; topic?: string; page?: string }> }) {
+export const maxDuration = 60;
+
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ view?: string; topic?: string; page?: string; media?: string }> }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/");
@@ -19,13 +24,19 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const params = await searchParams;
   const view = ["newest", "top", "mine"].includes(params.view || "") ? params.view! : "newest";
   const topic = topics.includes(params.topic as (typeof topics)[number]) ? params.topic : undefined;
+  const media: MediaFilter = mediaFilters.includes(params.media as MediaFilter) ? params.media as MediaFilter : "all";
   const page = Math.min(1000, Math.max(1, Number.parseInt(params.page || "1", 10) || 1));
-  const href = (nextView: string, nextTopic = topic, nextPage = 1) => `/dashboard?${new URLSearchParams({ view: nextView, ...(nextTopic ? { topic: nextTopic } : {}), ...(nextPage > 1 ? { page: String(nextPage) } : {}) })}`;
+  const href = (nextView: string, nextTopic = topic, nextPage = 1, nextMedia = media) => `/dashboard?${new URLSearchParams({ view: nextView, ...(nextTopic ? { topic: nextTopic } : {}), ...(nextMedia !== "all" ? { media: nextMedia } : {}), ...(nextPage > 1 ? { page: String(nextPage) } : {}) })}`;
   const prompt = dailyPrompt();
 
   // Rank before pagination so "top" covers the whole feed rather than one page.
-  const { data: feed, error: feedError } = await supabase.rpc("get_caption_feed", { p_view: view, p_topic: topic || null, p_offset: (page - 1) * 20 });
+  const { data: feed, error: feedError } = await supabase.rpc("get_meme_feed", { p_view: view, p_topic: topic || null, p_offset: (page - 1) * 20, p_media: media });
   const rows = (feed || []) as FeedRow[];
+  const paths = rows.flatMap(row => row.image_path ? [row.image_path] : []);
+  const { data: images } = paths.length
+    ? await supabase.storage.from("meme-images").createSignedUrls(paths, 3600)
+    : { data: [] };
+  const imageUrls = new Map((images || []).map(image => [image.path, image.signedUrl]));
   const { data: drafts, error: draftError } = await supabase.from("generations").select("id, prompt, topic, created_at").eq("user_id", user.id).eq("status", "queued").order("created_at", { ascending: false }).limit(10);
   const unavailable = !!feedError || !!draftError;
 
@@ -41,6 +52,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </Link>
         <nav aria-label="Account" className="flex min-w-0 flex-wrap items-center gap-4 text-sm">
           <span className="max-w-full break-all font-sans text-sm text-gray-700">{user.email}</span>
+          <a href="#composer" aria-label="Create a meme" title="Create a meme" className="flex size-10 shrink-0 items-center justify-center border-2 border-black bg-[var(--coin-gold)] text-black hover:bg-white"><Plus size={20} aria-hidden="true" /></a>
           <Link href="/profile" className="font-bold text-black hover:text-[var(--mario-red)] hover:underline decoration-[3px] underline-offset-4">PROFILE</Link>
           <SignOutButton />
         </nav>
@@ -80,6 +92,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             )}
           </nav>
 
+          <nav aria-label="Post formats" className="mb-6 flex flex-wrap gap-2">
+            {[["all", "All posts"], ["text", "Text"], ["photos", "Photos"]].map(([value, label]) =>
+              <Link key={value} href={href(view, topic, 1, value as MediaFilter)} aria-current={media === value ? "page" : undefined}
+                className={`border-2 border-black px-4 py-2 text-sm font-bold ${media === value ? "bg-[var(--coin-gold)] text-black" : "bg-white text-gray-700 hover:bg-gray-100"}`}>{label}</Link>)}
+          </nav>
+
           {/* Topic pills */}
           <div className="bg-white p-3 border-[4px] border-black rounded-xl shadow-[4px_4px_0_#000] mb-8">
             <p className="font-pixel text-[10px] text-gray-500 mb-2">SELECT LEVEL:</p>
@@ -93,7 +111,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           {/* Empty */}
           {!unavailable && !rows.length && <div className="chunky-card p-12 text-center bg-white">
             <p className="text-5xl mb-4" aria-hidden="true">{view === "mine" ? "✏️" : "👻"}</p>
-            <h2 className="font-sans text-2xl font-bold uppercase">{view === "mine" ? "INVENTORY EMPTY" : "NO CAPTIONS YET"}</h2>
+            <h2 className="font-sans text-2xl font-bold uppercase">{media === "photos" ? "NO PHOTO MEMES YET" : view === "mine" ? "INVENTORY EMPTY" : "NO CAPTIONS YET"}</h2>
             <p className="mt-2 text-lg font-bold text-gray-500">{view === "top" ? "No high scores this week." : "Be the first to drop a caption here."}</p>
           </div>}
 
@@ -104,6 +122,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <span className="px-2 py-1 font-bold border-2 border-black bg-[var(--coin-gold)] text-black uppercase">{row.topic}</span>
                 <span className="font-bold text-gray-600 uppercase">{row.user_id === user.id ? "PLAYER 1" : "CPU"} · {new Date(row.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" })}</span>
               </div>
+              {row.image_path && <MemePhoto key={imageUrls.get(row.image_path)} src={imageUrls.get(row.image_path) || undefined} alt={row.image_alt || "Community photo"} width={row.image_width || 4} height={row.image_height || 3} />}
               <p className="caption-copy my-5 whitespace-pre-wrap break-words text-xl sm:text-2xl">{row.content}</p>
               <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
                 <VoteControls id={row.id} upvotes={Number(row.upvotes)} downvotes={Number(row.downvotes)} ownVote={row.own_vote || 0} isOwnCaption={row.user_id === user.id} />
@@ -125,7 +144,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
         {/* Sidebar */}
         <aside className="min-w-0">
-          <div className="chunky-card bg-[var(--bg-sky)] p-6 mb-8 border-[4px] border-black shadow-[6px_6px_0_#000]">
+          <div id="composer" className="chunky-card scroll-mt-6 bg-[var(--bg-sky)] p-6 mb-8 border-[4px] border-black shadow-[6px_6px_0_#000]">
              <h2 className="mb-5 font-pixel text-sm text-black flex items-center gap-2 bg-white inline-block p-2 border-2 border-black rounded">
               <span className="text-lg">🔨</span> CRAFT CAPTION
             </h2>

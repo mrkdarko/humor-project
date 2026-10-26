@@ -13,10 +13,12 @@
     "@google/genai": "^2.27.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
+    "ipaddr.js": "2.2.0",
     "lucide-react": "^1.52.0",
-    "next": "16.3.8",
+    "next": "16.4.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
